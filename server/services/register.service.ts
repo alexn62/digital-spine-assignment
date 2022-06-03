@@ -6,8 +6,8 @@ const validateEmail = (email: string) => {
   return regex.test(String(email).toLowerCase());
 };
 
-const validatePassword = (password: string) => {
-  return password.length >= 8;
+const validatePassword = (password: string | undefined) => {
+  return password !== undefined && password.length >= 8;
 };
 
 const userExists = async (email: string) => {

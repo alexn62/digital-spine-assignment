@@ -6,21 +6,16 @@ import mongoose from 'mongoose';
 import { seed } from './seeding/seed';
 import { router } from './router';
 import { errorHandler } from './middlewares/error-handling.middleware';
+import session from 'express-session';
+import cookieParser from 'cookie-parser';
+import MongoStore from 'connect-mongo';
 
 dotenv.config({ path: path.resolve(__dirname, `.env.${process.env.NODE_ENV}`) });
 
 const app = express();
 
-const connectMongo = async () => {
-  const mongoURI = `mongodb://${process.env.HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`;
-  try {
-    await mongoose.connect(mongoURI);
-    console.log(`Mongo connected @ ${mongoURI}`);
-  } catch (e) {
-    console.log(e);
-  }
-};
-connectMongo();
+const mongoURI = `mongodb://${process.env.HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`;
+const connectMongo = mongoose.connect(mongoURI).then((m) => m.connection.getClient());
 
 // seed the database with some data
 seed();
@@ -28,6 +23,20 @@ seed();
 app.use(express.urlencoded({ extended: true }));
 
 app.use(cors());
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET!,
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+    },
+    store: new MongoStore({
+      clientPromise: connectMongo,
+    }),
+  })
+);
 
 app.use(express.json());
 

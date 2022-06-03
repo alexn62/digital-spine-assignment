@@ -8,19 +8,22 @@ import {
   INVALID_PASSWORD_ERROR,
   USER_ALREADY_EXISTS_ERROR,
 } from '../shared/errors/error-messages';
-import { closeConnection, setupConnection } from './test-helpers';
+import mongoose from 'mongoose';
+import { clearDatabase } from './test-helpers';
 
 describe('POST /register', () => {
   beforeAll(async () => {
-    await setupConnection();
+    await clearDatabase();
   });
-
   afterEach(async () => {
-    await User.deleteMany({});
+    await clearDatabase();
   });
 
-  afterAll(async () => {
-    await closeConnection();
+  afterAll((done) => {
+    mongoose.connection.close().then(() => {
+      server.close();
+      return done();
+    });
   });
 
   it('Users should be able to register through http requests', async () => {
@@ -30,7 +33,6 @@ describe('POST /register', () => {
     const users = await User.find({});
     expect(users.length).toBe(1);
   });
-
   it('Password should be hashed before saving to the database', async () => {
     const response = await request(server).post('/api/register').send(userMocks.user);
     expect(response.status).toBe(201);
@@ -70,5 +72,19 @@ describe('POST /register', () => {
     expect(response.body.error).toBe(USER_ALREADY_EXISTS_ERROR);
     const users = await User.find({});
     expect(users.length).toBe(1);
+  });
+
+  it("Response should have a session cookie with the user's id", async () => {
+    const response = await request(server).post('/api/register').send(userMocks.user);
+    expect(response.status).toBe(201);
+    expect(response.body.message).toBe(USER_CREATED);
+    const user = await User.findOne({
+      email: userMocks.email,
+    });
+    const session = response.headers['set-cookie'][0];
+    expect(session).toMatch(/connect.sid/);
+    const sessions = await mongoose.connection.db.collection('sessions').find({}).toArray();
+    const userSession = JSON.parse(sessions[0].session);
+    expect(userSession.uid).toBe(user._id.toString());
   });
 });
