@@ -23,12 +23,13 @@ seed();
 app.use(express.urlencoded({ extended: true }));
 
 app.use(cors());
-
+app.use(cookieParser());
 app.use(
   session({
     secret: process.env.SESSION_SECRET!,
     resave: false,
     saveUninitialized: true,
+    unset: 'destroy',
     cookie: {
       maxAge: 1000 * 60 * 60 * 24 * 7,
     },
