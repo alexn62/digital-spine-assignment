@@ -1,4 +1,4 @@
-import { Product } from '../db/schemas/product.schema';
+import { Product } from '../db/models/product.model';
 import data from './data.json';
 
 export const seed = async () => {
