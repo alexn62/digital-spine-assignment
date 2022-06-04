@@ -49,7 +49,21 @@ const removeFromCart = async (req: Request, res: Response, next: NextFunction) =
   }
 };
 
+const getCart = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    // @ts-ignore
+    const cart = await Cart.findOne({ _id: req.session.uid }).populate('products');
+    if (!cart) {
+      return next(new CustomError(CART_NOT_FOUND, 404));
+    }
+    res.status(200).send(cart);
+  } catch (err) {
+    return next(err);
+  }
+};
+
 export default {
   addToCart,
   removeFromCart,
+  getCart,
 };

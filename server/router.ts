@@ -15,3 +15,4 @@ router.get('/products', productsController.getProducts);
 
 router.patch('/addToCart/:id', authMiddleware, cartController.addToCart);
 router.delete('/removeFromCart/:id', authMiddleware, cartController.removeFromCart);
+router.get('/cart', authMiddleware, cartController.getCart);
