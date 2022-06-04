@@ -14,3 +14,4 @@ router.delete('/logout', logoutController);
 router.get('/products', productsController.getProducts);
 
 router.patch('/addToCart/:id', authMiddleware, cartController.addToCart);
+router.delete('/removeFromCart/:id', authMiddleware, cartController.removeFromCart);

@@ -46,7 +46,7 @@ describe('PATCH /addToCart', () => {
     expect(cart.products.length).toBe(1);
   });
 
-  it('Users should not be able to add products to cart twice', async () => {
+  it('Users should be able to add products to cart twice', async () => {
     const products = await Product.find({});
     const id = products[0]._id;
     const response = await request(server).patch(`/api/addToCart/${id}`).set('Cookie', session);

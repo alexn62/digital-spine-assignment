@@ -3,7 +3,7 @@ import { Product } from '../db/models/product.model';
 import { Cart } from '../db/models/cart.model';
 import cartService from '../services/cart.service';
 import { CART_UPDATE_SUCCESS } from '../shared/success-messages';
-import { PRODUCT_NOT_FOUND, USER_NOT_AUTHORIZED } from '../shared/errors/error-messages';
+import { CART_NOT_FOUND, PRODUCT_NOT_FOUND, USER_NOT_AUTHORIZED } from '../shared/errors/error-messages';
 import { CustomError } from '../shared/errors/CustomError.class';
 
 const addToCart = async (req: Request, res: Response, next: NextFunction) => {
@@ -26,6 +26,30 @@ const addToCart = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const removeFromCart = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      return next(new CustomError(PRODUCT_NOT_FOUND, 404));
+    }
+    // @ts-ignore
+    let cart = await Cart.findOne({ _id: req.session.uid });
+    if (!cart) {
+      return next(new CustomError(CART_NOT_FOUND, 404));
+    }
+    const productIndex = cart.products.indexOf(product._id);
+    if (productIndex === -1) {
+      return next(new CustomError(PRODUCT_NOT_FOUND, 404));
+    }
+    cart.products.splice(productIndex, 1);
+    await cart.save();
+    res.status(200).send({ message: CART_UPDATE_SUCCESS });
+  } catch (err) {
+    return next(err);
+  }
+};
+
 export default {
   addToCart,
+  removeFromCart,
 };
