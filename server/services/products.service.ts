@@ -1,4 +1,6 @@
 import { Product } from '../db/models/product.model';
+import { CustomError } from '../shared/errors/CustomError.class';
+import { PRODUCT_NOT_FOUND } from '../shared/errors/error-messages';
 
 export interface Query {
   title: string | RegExp;
@@ -21,6 +23,15 @@ const getProducts = async (query: any) => {
   return products;
 };
 
+const getProduct = async (id: string) => {
+  const product = await Product.findById(id);
+  if (!product) {
+    throw new CustomError(PRODUCT_NOT_FOUND, 404);
+  }
+  return product;
+};
+
 export default {
   getProducts,
+  getProduct,
 };

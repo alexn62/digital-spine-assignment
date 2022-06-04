@@ -54,6 +54,5 @@ describe('GET /cart', () => {
     const response = await request(server).get(`/api/cart`).set('Cookie', session);
     expect(response.status).toBe(200);
     expect(response.body.products.length).toBe(1);
-    console.log(response.body);
   });
 });

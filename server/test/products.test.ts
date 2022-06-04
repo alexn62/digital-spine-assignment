@@ -87,4 +87,15 @@ describe('GET /products', () => {
     const prodPrices = products.map((product: any) => product.price.value).sort((a: number, b: number) => b - a);
     expect(resPrices).toEqual(prodPrices);
   });
+
+  it('Should be able to get single product', async () => {
+    const product = await Product.findOne({});
+    const response = await request(server).get(`/api/products/${product._id}`);
+    expect(response.status).toBe(200);
+  });
+
+  it('Should return 404 if product not found', async () => {
+    const response = await request(server).get('/api/products/5f0c9d9b8e8f0f1f7e8c3a3d');
+    expect(response.status).toBe(404);
+  });
 });

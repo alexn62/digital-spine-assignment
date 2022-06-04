@@ -10,6 +10,16 @@ const getProducts = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const getProduct = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const product = await productsService.getProduct(req.params.id);
+    res.status(200).json(product);
+  } catch (err) {
+    return next(err);
+  }
+};
+
 export default {
   getProducts,
+  getProduct,
 };

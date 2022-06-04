@@ -12,6 +12,7 @@ router.post('/login', loginController);
 router.delete('/logout', logoutController);
 
 router.get('/products', productsController.getProducts);
+router.get('/products/:id', productsController.getProduct);
 
 router.patch('/addToCart/:id', authMiddleware, cartController.addToCart);
 router.delete('/removeFromCart/:id', authMiddleware, cartController.removeFromCart);
