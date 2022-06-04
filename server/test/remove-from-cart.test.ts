@@ -10,6 +10,7 @@ import { CART_UPDATE_SUCCESS } from '../shared/success-messages';
 import { Cart } from '../db/models/cart.model';
 describe('DELETE /removeFromCart', () => {
   let session: string;
+  let sessionId: string;
   beforeAll((done) => {
     clearDatabase().then(() => {
       Product.insertMany(data.products).then(() => {
@@ -18,6 +19,7 @@ describe('DELETE /removeFromCart', () => {
           .send(userMocks.user)
           .then((response) => {
             session = response.headers['set-cookie'][0];
+            sessionId = session.split('s%3A')[1].split('.')[0];
             return done();
           });
       });
@@ -28,13 +30,6 @@ describe('DELETE /removeFromCart', () => {
       server.close();
       return done();
     });
-  });
-
-  it('Unauthorized users should not be able to remove products from cart', async () => {
-    const product = await Product.findOne({});
-    const id = product._id;
-    const response = await request(server).delete(`/api/removeFromCart/${id}`);
-    expect(response.status).toBe(401);
   });
 
   it('If product is not found, should return 404', async () => {
@@ -54,13 +49,12 @@ describe('DELETE /removeFromCart', () => {
   it('If cart is found, should remove product from cart', async () => {
     const product = await Product.findOne({});
     const id = product._id;
-    const user = await User.findOne({});
-    const cart = new Cart({ _id: user._id, products: [id] });
+    const cart = new Cart({ sessionId, products: [id] });
     await cart.save();
     const response = await request(server).delete(`/api/removeFromCart/${id}`).set('Cookie', session);
     expect(response.status).toBe(200);
     expect(response.body.message).toBe(CART_UPDATE_SUCCESS);
-    const cartAfter = await Cart.findOne({});
+    const cartAfter = await Cart.findOne({ sessionId });
     expect(cartAfter.products.length).toBe(0);
   });
 
@@ -68,14 +62,14 @@ describe('DELETE /removeFromCart', () => {
     const product = await Product.findOne({});
     const id = product._id;
     const user = await User.findOne({});
-    const cart = await Cart.findOne({ _id: user._id });
+    const cart = await Cart.findOne({ sessionId });
     cart.products.push(id);
     cart.products.push(id);
     await cart.save();
     const response = await request(server).delete(`/api/removeFromCart/${id}`).set('Cookie', session);
     expect(response.status).toBe(200);
     expect(response.body.message).toBe(CART_UPDATE_SUCCESS);
-    const cartAfter = await Cart.findOne({});
+    const cartAfter = await Cart.findOne({ sessionId });
     expect(cartAfter.products.length).toBe(1);
   });
 });

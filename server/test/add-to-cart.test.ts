@@ -10,6 +10,7 @@ import { CART_UPDATE_SUCCESS } from '../shared/success-messages';
 import { Cart } from '../db/models/cart.model';
 describe('PATCH /addToCart', () => {
   let session: string;
+  let sessionId: string;
   beforeAll((done) => {
     clearDatabase().then(() => {
       Product.insertMany(data.products).then(() => {
@@ -18,6 +19,8 @@ describe('PATCH /addToCart', () => {
           .send(userMocks.user)
           .then((response) => {
             session = response.headers['set-cookie'][0];
+            sessionId = session.split('s%3A')[1].split('.')[0];
+            console.log('sessionid', sessionId);
             return done();
           });
       });
@@ -30,19 +33,14 @@ describe('PATCH /addToCart', () => {
     });
   });
 
-  it('Unauthorized users should not be able to add products to cart', async () => {
-    const response = await request(server).patch('/api/addToCart/5e6f4a7a8d6c3d7b9e9a9c8a');
-    expect(response.status).toBe(401);
-  });
-
   it('Users should be able to add products to cart', async () => {
     const products = await Product.find({});
     const id = products[0]._id;
     const response = await request(server).patch(`/api/addToCart/${id}`).set('Cookie', session);
     expect(response.status).toBe(200);
     expect(response.body.message).toBe(CART_UPDATE_SUCCESS);
-    const user = await User.findOne({ email: userMocks.user.email });
-    const cart = await Cart.findOne({ _id: user._id });
+    const allCarts = await Cart.find({});
+    const cart = await Cart.findOne({ sessionId: sessionId });
     expect(cart.products.length).toBe(1);
   });
 
@@ -53,7 +51,7 @@ describe('PATCH /addToCart', () => {
     expect(response.status).toBe(200);
     expect(response.body.message).toBe(CART_UPDATE_SUCCESS);
     const user = await User.findOne({ email: userMocks.user.email });
-    const cart = await Cart.findOne({ _id: user._id });
+    const cart = await Cart.findOne({ sessionId: sessionId });
     expect(cart.products.length).toBe(2);
   });
 });

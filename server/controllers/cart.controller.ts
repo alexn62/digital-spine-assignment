@@ -13,10 +13,10 @@ const addToCart = async (req: Request, res: Response, next: NextFunction) => {
       return next(new CustomError(PRODUCT_NOT_FOUND, 404));
     }
     // @ts-ignore
-    let cart = await Cart.findOne({ _id: req.session.uid });
+    let cart = await Cart.findOne({ sessionId: req.sessionID });
     if (!cart) {
       // @ts-ignore
-      cart = await cartService.createCart(req.session.uid);
+      cart = await cartService.createCart(req.sessionID);
     }
     cart.products.push(product._id);
     await cart.save();
@@ -33,7 +33,7 @@ const removeFromCart = async (req: Request, res: Response, next: NextFunction) =
       return next(new CustomError(PRODUCT_NOT_FOUND, 404));
     }
     // @ts-ignore
-    let cart = await Cart.findOne({ _id: req.session.uid });
+    let cart = await Cart.findOne({ sessionId: req.sessionID });
     if (!cart) {
       return next(new CustomError(CART_NOT_FOUND, 404));
     }
@@ -52,7 +52,7 @@ const removeFromCart = async (req: Request, res: Response, next: NextFunction) =
 const getCart = async (req: Request, res: Response, next: NextFunction) => {
   try {
     // @ts-ignore
-    const cart = await Cart.findOne({ _id: req.session.uid }).populate('products');
+    const cart = await Cart.findOne({ sessionId: req.sessionID }).populate('products');
     if (!cart) {
       return next(new CustomError(CART_NOT_FOUND, 404));
     }

@@ -9,6 +9,7 @@ import { User } from '../db/models/user.model';
 import { Cart } from '../db/models/cart.model';
 describe('GET /cart', () => {
   let session: string;
+  let sessionId: string;
   beforeAll((done) => {
     clearDatabase().then(() => {
       Product.insertMany(data.products).then(() => {
@@ -17,6 +18,7 @@ describe('GET /cart', () => {
           .send(userMocks.user)
           .then((response) => {
             session = response.headers['set-cookie'][0];
+            sessionId = session.split('s%3A')[1].split('.')[0];
             return done();
           });
       });
@@ -29,16 +31,6 @@ describe('GET /cart', () => {
     });
   });
 
-  it('Unauthorized users should not be able to get cart', async () => {
-    const product = await Product.findOne({});
-    const user = await User.findOne({});
-    const id = product._id;
-    const cart = new Cart({ _id: user._id, products: [id] });
-    await cart.save();
-    const response = await request(server).get(`/api/cart`);
-    expect(response.status).toBe(401);
-  });
-
   it('If cart is not found, should return 404', async () => {
     await Cart.deleteMany();
     const response = await request(server).get(`/api/cart`).set('Cookie', session);
@@ -46,10 +38,9 @@ describe('GET /cart', () => {
   });
 
   it('If cart is found, should return cart', async () => {
-    const user = await User.findOne({});
     const product = await Product.findOne({});
     const id = product._id;
-    const cart = new Cart({ _id: user._id, products: [id] });
+    const cart = new Cart({ sessionId, products: [id] });
     await cart.save();
     const response = await request(server).get(`/api/cart`).set('Cookie', session);
     expect(response.status).toBe(200);
