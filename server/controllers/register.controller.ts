@@ -30,6 +30,6 @@ export const registerController = async (req: Request, res: Response, next: Next
     req.session.uid = dbUser._id;
     res.status(201).send({ message: USER_CREATED });
   } catch (err) {
-    return next(new CustomError(UNKNOWN_SERVER_ERROR, 500));
+    return next(err);
   }
 };

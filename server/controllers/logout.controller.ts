@@ -11,6 +11,6 @@ export const logoutController = async (req: Request, res: Response, next: NextFu
     }
     res.status(200).send({ message: LOGGED_OUT });
   } catch (err) {
-    return next(new CustomError(UNKNOWN_SERVER_ERROR, 500));
+    return next(err);
   }
 };

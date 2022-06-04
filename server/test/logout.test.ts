@@ -28,8 +28,6 @@ describe('DELETE /logout', () => {
   });
 
   it('Session cookie should be deleted', async () => {
-    const prevSessions = await mongoose.connection.db.collection('sessions').find({}).toArray();
-    console.log(prevSessions);
     const response = await request(server).delete('/api/logout');
     expect(response.status).toBe(200);
     expect(response.headers['set-cookie']).toBeUndefined();

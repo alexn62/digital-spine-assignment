@@ -18,7 +18,7 @@ const mongoURI = `mongodb://${process.env.HOST}:${process.env.DB_PORT}/${process
 const connectMongo = mongoose.connect(mongoURI).then((m) => m.connection.getClient());
 
 // seed the database with some data
-seed();
+// seed();
 
 app.use(express.urlencoded({ extended: true }));
 

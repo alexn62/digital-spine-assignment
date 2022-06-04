@@ -15,7 +15,6 @@ export const loginController = async (req: Request, res: Response, next: NextFun
     if (!user) {
       return next(new CustomError(INVALID_EMAIL_OR_PASSWORD_ERROR, 400));
     }
-    console.log(user);
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return next(new CustomError(INVALID_EMAIL_OR_PASSWORD_ERROR, 400));
@@ -24,6 +23,6 @@ export const loginController = async (req: Request, res: Response, next: NextFun
     req.session.uid = user._id;
     res.status(200).send({ message: LOGGED_IN });
   } catch (err) {
-    return next(new CustomError(UNKNOWN_SERVER_ERROR, 500));
+    return next(err);
   }
 };
