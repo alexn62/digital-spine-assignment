@@ -6,6 +6,9 @@ import { useCallback, useState } from 'react';
 export interface SearchFilters {
   search: string;
   category: string;
+  tags: string[];
+  sortBy: string;
+  brand: string;
 }
 
 const fetchProducts = async (filters: string | undefined): Promise<[]> => {
@@ -31,13 +34,22 @@ const ProductsView = () => {
     if (params.category) {
       query.push(`category=${params.category.replaceAll(' ', '%20').replaceAll('&', '%26')}`);
     }
-
+    if (params.tags && params.tags.length > 0) {
+      query.push(`tags=${params.tags.join('+').replaceAll(' ', '%20').replaceAll('&', '%26')}`);
+    }
+    if (params.sortBy) {
+      query.push(`sortBy=${params.sortBy.replaceAll(' ', '+')}`);
+    }
+    if (params.brand) {
+      query.push(`brand=${params.brand.replaceAll(' ', '%20').replaceAll('&', '%26')}`);
+    }
     return query.join('&');
   }, []);
+
   const { isLoading, data, error } = useProducts(getParams(filters));
   return (
     <div className="mt-12 max-w-4xl mx-auto">
-      <Filters setFilters={setFilters} />
+      <Filters filters={filters} setFilters={setFilters} />
       {error && <div>{error.message}</div>}
       {isLoading && <p>Loading...</p>}
       {data && <ProductList products={data} />}
