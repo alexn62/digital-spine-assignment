@@ -6,6 +6,7 @@ import checkoutController from './controllers/checkout.controller';
 import productsController from './controllers/products.controller';
 import { registerController } from './controllers/register.controller';
 import { authMiddleware } from './middlewares/auth.middleware';
+import ordersController from './controllers/orders.controller';
 export const router = Router();
 
 router.post('/register', registerController);
@@ -20,3 +21,5 @@ router.delete('/removeFromCart/:id', cartController.removeFromCart);
 router.get('/cart', cartController.getCart);
 
 router.post('/checkout', authMiddleware, checkoutController.checkout);
+
+router.get('/orders', authMiddleware, ordersController.getOrders);

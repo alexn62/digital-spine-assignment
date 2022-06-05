@@ -20,7 +20,6 @@ describe('PATCH /addToCart', () => {
           .then((response) => {
             session = response.headers['set-cookie'][0];
             sessionId = session.split('s%3A')[1].split('.')[0];
-            console.log('sessionid', sessionId);
             return done();
           });
       });

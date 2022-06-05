@@ -42,7 +42,6 @@ describe('GET /cart', () => {
     const cart = new Cart({ sessionId, products: [{ product: id, quantity: 1 }] });
     await cart.save();
     const response = await request(server).get(`/api/cart`).set('Cookie', session);
-    console.log(response.body.products);
     expect(response.status).toBe(200);
     expect(response.body.products.length).toBe(1);
   });
