@@ -22,8 +22,15 @@ seed();
 
 app.use(express.urlencoded({ extended: true }));
 
-app.use(cors());
-app.use(cookieParser());
+app.use(
+  cors({
+    origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
+    methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'HEAD'],
+    credentials: true,
+  })
+);
+
+// app.use(cookieParser());
 app.use(
   session({
     secret: process.env.SESSION_SECRET!,
@@ -31,6 +38,9 @@ app.use(
     saveUninitialized: true,
     unset: 'destroy',
     cookie: {
+      // sameSite: 'none',
+      secure: process.env.NODE_ENV === 'prod',
+      httpOnly: false,
       maxAge: 1000 * 60 * 60 * 24 * 7,
     },
     store: new MongoStore({

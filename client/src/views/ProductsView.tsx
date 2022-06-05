@@ -13,9 +13,12 @@ export interface SearchFilters {
 
 const fetchProducts = async (filters: string | undefined): Promise<[]> => {
   console.log(filters);
+
   const products = await axios
-    .get(`${process.env.REACT_APP_API_URL}/products?${filters}`)
-    .then((response) => response.data);
+    .get(`${process.env.REACT_APP_API_URL}/products?${filters}`, { withCredentials: true })
+    .then((response) => {
+      return response.data;
+    });
   return products;
 };
 
