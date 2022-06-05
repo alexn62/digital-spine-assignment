@@ -3,12 +3,13 @@ import axios from 'axios';
 import ProductList from '../components/ProductList';
 import Filters from '../components/Filters';
 import { useCallback, useState } from 'react';
-
 export interface SearchFilters {
   search: string;
+  category: string;
 }
 
 const fetchProducts = async (filters: string | undefined): Promise<[]> => {
+  console.log(filters);
   const products = await axios
     .get(`${process.env.REACT_APP_API_URL}/products?${filters}`)
     .then((response) => response.data);
@@ -21,12 +22,17 @@ function useProducts(filters: string | undefined) {
 
 const ProductsView = () => {
   const [filters, setFilters] = useState<SearchFilters>({} as SearchFilters);
+
   const getParams = useCallback((params: SearchFilters) => {
-    let queryString = '';
+    let query = [];
     if (params.search) {
-      queryString += `title=${params.search}`;
+      query.push(`title=${params.search}`);
     }
-    return queryString;
+    if (params.category) {
+      query.push(`category=${params.category.replaceAll(' ', '%20').replaceAll('&', '%26')}`);
+    }
+
+    return query.join('&');
   }, []);
   const { isLoading, data, error } = useProducts(getParams(filters));
   return (
