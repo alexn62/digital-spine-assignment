@@ -7,6 +7,7 @@ import productsController from './controllers/products.controller';
 import { registerController } from './controllers/register.controller';
 import { authMiddleware } from './middlewares/auth.middleware';
 import ordersController from './controllers/orders.controller';
+import sessionController from './controllers/session.controller';
 export const router = Router();
 
 router.post('/register', registerController);
@@ -23,3 +24,5 @@ router.get('/cart', cartController.getCart);
 router.post('/checkout', authMiddleware, checkoutController.checkout);
 
 router.get('/orders', authMiddleware, ordersController.getOrders);
+
+router.get('/session', sessionController.getSession);

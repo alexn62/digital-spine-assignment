@@ -1,8 +1,34 @@
+import axios from 'axios';
+import { useUserContext } from '../stores/UserContext';
+
 const ProductPreview = ({ product }: { product: any }) => {
+  const userContext = useUserContext();
+  const addToCart = async (product: any) => {
+    try {
+      const response = await axios.patch(
+        `${process.env.REACT_APP_API_URL}/addToCart/${product._id}`,
+        {},
+        { withCredentials: true }
+      );
+      if (response.status === 200) {
+        userContext.setCartCount((prev) => (prev === undefined ? 1 : prev + 1));
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const handleAddToCart = () => {
+    addToCart(product);
+  };
+
   return (
     <div className="flex flex-col drop-shadow-md rounded-lg bg-white w-48 m-2 cursor-pointer overflow-hidden group">
       {product.available && (
-        <div className="absolute bg-green-400 px-2 rounded-lg text-white bottom-[-24px] group-hover:bottom-2 right-2 transition-all duration-300 hover:bg-green-500">
+        <div
+          onClick={handleAddToCart}
+          className="absolute bg-green-400 px-2 rounded-lg text-white bottom-[-24px] group-hover:bottom-2 right-2 transition-all duration-300 hover:bg-green-500"
+        >
           + Add
         </div>
       )}
