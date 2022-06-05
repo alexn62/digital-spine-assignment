@@ -8,3 +8,4 @@ export const USER_NOT_LOGGED_IN = 'The user is not logged in.';
 export const USER_NOT_AUTHORIZED = 'The user is not authorized.';
 export const PRODUCT_NOT_FOUND = 'The product was not found.';
 export const CART_NOT_FOUND = 'The cart was not found.';
+export const INVALID_ORDER_STATUS = 'The order status is invalid.';

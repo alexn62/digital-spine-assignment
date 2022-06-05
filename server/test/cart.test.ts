@@ -5,7 +5,6 @@ import { server } from '..';
 import data from '../seeding/data.json';
 import { userMocks } from './mocks/user.mocks';
 import mongoose from 'mongoose';
-import { User } from '../db/models/user.model';
 import { Cart } from '../db/models/cart.model';
 describe('GET /cart', () => {
   let session: string;
