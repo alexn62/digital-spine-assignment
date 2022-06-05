@@ -5,6 +5,7 @@ import cartService from '../services/cart.service';
 import { CART_UPDATE_SUCCESS } from '../shared/success-messages';
 import { CART_NOT_FOUND, PRODUCT_NOT_FOUND, USER_NOT_AUTHORIZED } from '../shared/errors/error-messages';
 import { CustomError } from '../shared/errors/CustomError.class';
+import mongoose from 'mongoose';
 
 const addToCart = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -16,9 +17,19 @@ const addToCart = async (req: Request, res: Response, next: NextFunction) => {
     let cart = await Cart.findOne({ sessionId: req.sessionID });
     if (!cart) {
       // @ts-ignore
-      cart = await cartService.createCart(req.sessionID);
+      cart = await cartService.createCart(req.sessionID, product._id);
+    } else {
+      // if product already in cart, increase quantity
+      const productIdStrings = cart.products.map((item: { product: mongoose.Types.ObjectId }) =>
+        item.product.toString()
+      );
+      if (productIdStrings.includes(product._id.toString())) {
+        const productIndex = productIdStrings.indexOf(product._id.toString());
+        cart.products[productIndex].quantity += 1;
+      } else {
+        cart.products.push({ product: product._id, quantity: 1 });
+      }
     }
-    cart.products.push(product._id);
     await cart.save();
     res.status(200).send({ message: CART_UPDATE_SUCCESS });
   } catch (err) {
@@ -37,11 +48,17 @@ const removeFromCart = async (req: Request, res: Response, next: NextFunction) =
     if (!cart) {
       return next(new CustomError(CART_NOT_FOUND, 404));
     }
-    const productIndex = cart.products.indexOf(product._id);
+    const productIndex = cart.products
+      .map((item: { product: mongoose.Types.ObjectId }) => item.product.toString())
+      .indexOf(product._id.toString());
     if (productIndex === -1) {
       return next(new CustomError(PRODUCT_NOT_FOUND, 404));
     }
-    cart.products.splice(productIndex, 1);
+    if (cart.products[productIndex].quantity > 1) {
+      cart.products[productIndex].quantity -= 1;
+    } else {
+      cart.products.splice(productIndex, 1);
+    }
     await cart.save();
     res.status(200).send({ message: CART_UPDATE_SUCCESS });
   } catch (err) {
@@ -52,7 +69,7 @@ const removeFromCart = async (req: Request, res: Response, next: NextFunction) =
 const getCart = async (req: Request, res: Response, next: NextFunction) => {
   try {
     // @ts-ignore
-    const cart = await Cart.findOne({ sessionId: req.sessionID }).populate('products');
+    const cart = await Cart.findOne({ sessionId: req.sessionID }).populate('products.product');
     if (!cart) {
       return next(new CustomError(CART_NOT_FOUND, 404));
     }

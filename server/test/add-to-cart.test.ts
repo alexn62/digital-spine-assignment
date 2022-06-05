@@ -39,7 +39,6 @@ describe('PATCH /addToCart', () => {
     const response = await request(server).patch(`/api/addToCart/${id}`).set('Cookie', session);
     expect(response.status).toBe(200);
     expect(response.body.message).toBe(CART_UPDATE_SUCCESS);
-    const allCarts = await Cart.find({});
     const cart = await Cart.findOne({ sessionId: sessionId });
     expect(cart.products.length).toBe(1);
   });
@@ -50,8 +49,8 @@ describe('PATCH /addToCart', () => {
     const response = await request(server).patch(`/api/addToCart/${id}`).set('Cookie', session);
     expect(response.status).toBe(200);
     expect(response.body.message).toBe(CART_UPDATE_SUCCESS);
-    const user = await User.findOne({ email: userMocks.user.email });
     const cart = await Cart.findOne({ sessionId: sessionId });
-    expect(cart.products.length).toBe(2);
+    expect(cart.products.length).toBe(1);
+    expect(cart.products[0].quantity).toBe(2);
   });
 });

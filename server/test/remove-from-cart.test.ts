@@ -49,7 +49,7 @@ describe('DELETE /removeFromCart', () => {
   it('If cart is found, should remove product from cart', async () => {
     const product = await Product.findOne({});
     const id = product._id;
-    const cart = new Cart({ sessionId, products: [id] });
+    const cart = new Cart({ sessionId, products: [{ product: id, quantity: 1 }] });
     await cart.save();
     const response = await request(server).delete(`/api/removeFromCart/${id}`).set('Cookie', session);
     expect(response.status).toBe(200);
@@ -61,10 +61,8 @@ describe('DELETE /removeFromCart', () => {
   it('If item is in cart twice, should remove only one', async () => {
     const product = await Product.findOne({});
     const id = product._id;
-    const user = await User.findOne({});
     const cart = await Cart.findOne({ sessionId });
-    cart.products.push(id);
-    cart.products.push(id);
+    cart.products.push({ product: id, quantity: 2 });
     await cart.save();
     const response = await request(server).delete(`/api/removeFromCart/${id}`).set('Cookie', session);
     expect(response.status).toBe(200);

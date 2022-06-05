@@ -1,9 +1,11 @@
 import mongoose from 'mongoose';
 
-export const cartSchema = new mongoose.Schema({
-  sessionId: {
+export const orderSchema = new mongoose.Schema({
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+  },
+  status: {
     type: String,
-    unique: true,
   },
   products: [
     {
