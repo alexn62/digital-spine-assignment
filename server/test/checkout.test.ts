@@ -6,6 +6,7 @@ import data from '../seeding/data.json';
 import { userMocks } from './mocks/user.mocks';
 import mongoose from 'mongoose';
 import { Cart } from '../db/models/cart.model';
+import { INVALID_ORDER_STATUS } from '../shared/errors/error-messages';
 describe('POST /checkout', () => {
   let session: string;
   let sessionId: string;
@@ -53,5 +54,22 @@ describe('POST /checkout', () => {
     expect(response.body.order.products[0]).toHaveProperty('quantity');
     const cart = await Cart.findOne({ sessionId });
     expect(cart.products).toHaveLength(0);
+  });
+
+  it('Authorized users should be able to checkout with cancelled status', async () => {
+    const response = await request(server).post(`/api/checkout`).set('Cookie', session).send({ status: 'cancelled' });
+    expect(response.status).toBe(200);
+    expect(response.body.order).toHaveProperty('products');
+    expect(response.body.order).toHaveProperty('status');
+    expect(response.body.order).toHaveProperty('user');
+    expect(response.body.order.products).toHaveLength(0);
+    const cart = await Cart.findOne({ sessionId });
+    expect(cart.products).toHaveLength(0);
+  });
+
+  it('Authorized users should not be able to checkout with invalid status', async () => {
+    const response = await request(server).post(`/api/checkout`).set('Cookie', session).send({ status: 'invalid' });
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe(INVALID_ORDER_STATUS);
   });
 });
