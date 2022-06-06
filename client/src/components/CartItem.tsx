@@ -14,13 +14,9 @@ const CartItem = ({
   const userContext = useUserContext();
   const handleRemove = async () => {
     try {
-      const response = await axios.delete(
-        `${process.env.REACT_APP_API_URL}/removeFromCart/${item._id}`,
-
-        {
-          withCredentials: true,
-        }
-      );
+      const response = await axios.delete(`${process.env.REACT_APP_API_URL}/removeFromCart/${item._id}`, {
+        withCredentials: true,
+      });
       if (response.status === 200) {
         if (quantity > 1) {
           setCart((cart) => ({
@@ -75,7 +71,7 @@ const CartItem = ({
       <img src={item.display_image} alt={item.title} className="h-14 w-28 object-cover aspect-auto rounded-md"></img>
       <h3 className="font-semibold text-md">{item.title}</h3>
       <div className="flex-grow"></div>
-      <div className="flex space-x-2 bg-gray-200 rounded-md px-2 py-1 h-full items-center">
+      <div className="flex space-x-2 bg-gray-200 rounded-md px-2 py-1 items-center">
         <button
           onClick={handleRemove}
           className="h-5 w-5 text-sm flex flex-col justify-between items-center bg-white rounded-full"

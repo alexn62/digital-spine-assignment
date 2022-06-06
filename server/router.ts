@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { Router } from 'express';
 import cartController from './controllers/cart.controller';
 import { loginController } from './controllers/login.controller';
 import { logoutController } from './controllers/logout.controller';
