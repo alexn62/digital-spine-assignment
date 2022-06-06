@@ -14,7 +14,6 @@ const fetchSession = async (): Promise<Session> => {
   const data = await axios
     .get(`${process.env.REACT_APP_API_URL}/session`, { withCredentials: true })
     .then((response) => {
-      console.log(response.data);
       return response.data;
     });
   return data;
@@ -27,13 +26,11 @@ function useSession(setData: (data: Session) => void) {
 const HomeView = () => {
   const userContext = useUserContext();
   const setData = (data: Session) => {
-    console.log('Finished loading: ', data);
     userContext.setUser(data.uid);
     userContext.setCartCount(data.cart);
   };
 
   useSession(setData);
-  // TODO add data to context (uid and cartcount)
   return (
     <>
       <NavBar />

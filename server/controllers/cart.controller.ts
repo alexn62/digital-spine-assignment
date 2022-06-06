@@ -13,10 +13,8 @@ const addToCart = async (req: Request, res: Response, next: NextFunction) => {
     if (!product) {
       return next(new CustomError(PRODUCT_NOT_FOUND, 404));
     }
-    // @ts-ignore
     let cart = await Cart.findOne({ sessionId: req.sessionID });
     if (!cart) {
-      // @ts-ignore
       cart = await cartService.createCart(req.sessionID, product._id);
     } else {
       // if product already in cart, increase quantity
@@ -43,8 +41,8 @@ const removeFromCart = async (req: Request, res: Response, next: NextFunction) =
     if (!product) {
       return next(new CustomError(PRODUCT_NOT_FOUND, 404));
     }
-    // @ts-ignore
     let cart = await Cart.findOne({ sessionId: req.sessionID });
+
     if (!cart) {
       return next(new CustomError(CART_NOT_FOUND, 404));
     }

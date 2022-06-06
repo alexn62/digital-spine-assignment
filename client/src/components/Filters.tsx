@@ -70,7 +70,7 @@ const Filters = ({
           <option key={category}>{category}</option>
         ))}
       </select>
-      <form onSubmit={handleAddTag}>
+      <form onSubmit={handleAddTag} className="flex-nowrap space-x-1 flex items-center">
         <input
           onChange={handleTagChange}
           placeholder="Add Tags..."
@@ -88,7 +88,7 @@ const Filters = ({
               className="cursor-pointer rounded-full border border-gray-200 px-2 flex space-x-1 items-center"
             >
               <p>{tag}</p>
-              <div className="w-5 h-5 rounded-full border border-gray-200 flex flex-col justify-center items-center text-white bg-gray-200 hover:bg-gray-300">
+              <div className="w-5 h-5  rounded-full border border-gray-200 flex flex-col justify-center items-center text-white bg-gray-200 hover:bg-gray-300">
                 <p onClick={() => handleRemoveTag(i)}>x</p>
               </div>
             </div>

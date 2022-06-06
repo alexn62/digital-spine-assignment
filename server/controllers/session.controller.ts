@@ -15,7 +15,6 @@ const getSession = async (req: Request, res: Response, next: NextFunction) => {
       // @ts-ignore
       response.uid = req.session.uid;
     }
-    console.log(req.sessionID);
     const cart = await Cart.findOne({ sessionId: req.sessionID });
     if (cart) {
       // @ts-ignore
