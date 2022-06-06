@@ -6,6 +6,7 @@ import { useState } from 'react';
 import CustomButton from './CustomButton';
 import axios from 'axios';
 import { useUserContext } from '../stores/UserContext';
+import { Link } from 'react-router-dom';
 const CartProductList = ({
   products,
   setCart,
@@ -13,6 +14,9 @@ const CartProductList = ({
   products: CartProduct[];
   setCart: React.Dispatch<React.SetStateAction<Cart>>;
 }) => {
+  const TAX_RATE = 0.2;
+  const userContext = useUserContext();
+
   const [clearCartModalIsOpen, setClearCartModalIsOpen] = useState(false);
   const openClearCartModal = () => {
     setClearCartModalIsOpen(true);
@@ -29,6 +33,7 @@ const CartProductList = ({
       );
       if (response.status === 200) {
         setCart({ products: [] });
+        userContext.setCartCount(0);
         closeClearCartModal();
       }
     } catch (e) {
@@ -53,6 +58,7 @@ const CartProductList = ({
       );
       if (response.status === 200) {
         setCart({ products: [] });
+        userContext.setCartCount(0);
         closeCheckoutModal();
       }
     } catch (e) {
@@ -71,10 +77,10 @@ const CartProductList = ({
     },
   };
 
-  const userContext = useUserContext();
   return (
     <div className="flex justify-between">
       <div className="w-2/3 pt-2 flex flex-col space-y-2">
+        {products.length === 0 && <p>The are no products in your cart yet!</p>}
         {products.map((product) => (
           <CartItem key={product.product._id} product={product} setCart={setCart} />
         ))}
@@ -83,7 +89,7 @@ const CartProductList = ({
         <h2 className="font-semibold text-lg">Checkout</h2>
         <div className="flex flex-col space-y-1 w-full">
           {products.map((product: CartProduct) => (
-            <div className="flex justify-end w-full">
+            <div key={product.product._id} className="flex justify-end w-full">
               <p className="line-clamp-1 flex-grow overflow-ellipsis">{`${product.quantity}x ${product.product.title}`}</p>
               <p className="whitespace-nowrap ml-auto">{`${(product.product.price.value * product.quantity).toFixed(
                 2
@@ -92,9 +98,18 @@ const CartProductList = ({
           ))}
           <br />
           <div className="flex justify-between">
+            <p className="text-gray-500">Tax ({TAX_RATE * 100}%):</p>
+            <p className="whitespace-nowrap ml-auto text-gray-500">{`${products
+              .reduce((total: number, cp: CartProduct) => total + cp.product.price.value * cp.quantity * TAX_RATE, 0)
+              .toFixed(2)} €`}</p>
+          </div>
+          <div className="flex justify-between">
             <p className="font-semibold">Total:</p>
             <p className="whitespace-nowrap ml-auto">{`${products
-              .reduce((total: number, cp: CartProduct) => total + cp.product.price.value * cp.quantity, 0)
+              .reduce(
+                (total: number, cp: CartProduct) => total + cp.product.price.value * cp.quantity * (1 + TAX_RATE),
+                0
+              )
               .toFixed(2)} €`}</p>
           </div>
         </div>
@@ -102,13 +117,16 @@ const CartProductList = ({
         {!userContext.user && (
           <div className="flex justify-between items-center">
             <p>Login to checkout.</p>
-            <CustomButton title="Login" onClick={() => {}} />
+            <Link to="/login">
+              <CustomButton title="Login" onClick={() => {}} />
+            </Link>
           </div>
         )}
         {userContext.user && (
           <div className="flex space-x-2 justify-end">
             <CustomButton title="Clear Cart" onClick={openClearCartModal} negative={true} />
             <Modal
+              ariaHideApp={false}
               isOpen={clearCartModalIsOpen}
               onRequestClose={closeClearCartModal}
               style={customStyles}
@@ -125,6 +143,7 @@ const CartProductList = ({
             </Modal>
             <CustomButton title="Checkout" onClick={openCheckoutModal} />
             <Modal
+              ariaHideApp={false}
               isOpen={checkoutModalIsOpen}
               onRequestClose={closeCheckoutModal}
               style={customStyles}

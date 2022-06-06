@@ -9,10 +9,18 @@ export interface Cart {
 }
 
 const fetchCart = async (): Promise<Cart> => {
-  const data = await axios.get(`${process.env.REACT_APP_API_URL}/cart`, { withCredentials: true }).then((response) => {
-    return response.data;
-  });
-  return data;
+  try {
+    const data = await axios
+      .get(`${process.env.REACT_APP_API_URL}/cart`, { withCredentials: true })
+      .then((response) => {
+        console.log(response);
+        return response.data;
+      });
+    return data;
+  } catch (e) {
+    console.log(e);
+    return { products: [] };
+  }
 };
 
 function useCart(setCart: React.Dispatch<React.SetStateAction<Cart>>) {
@@ -24,7 +32,15 @@ const CartView = () => {
   const { isLoading, error } = useCart(setCart);
   return (
     <div className="mt-12 max-w-4xl mx-auto">
-      {error && <div>{error.message}</div>}
+      {error ? (
+        error.message.match(/404/) ? (
+          <p>The are no products in your cart yet!</p>
+        ) : (
+          <p>Something went wrong!</p>
+        )
+      ) : (
+        <></>
+      )}
       {isLoading && <p>Loading...</p>}
       {cart && !isLoading && <CartProductList products={cart.products} setCart={setCart} />}
     </div>

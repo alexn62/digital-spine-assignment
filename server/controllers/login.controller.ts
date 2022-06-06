@@ -21,7 +21,7 @@ export const loginController = async (req: Request, res: Response, next: NextFun
     }
     // @ts-ignore
     req.session.uid = user._id;
-    res.status(200).send({ message: LOGGED_IN });
+    res.status(200).send({ data: user._id, message: LOGGED_IN });
   } catch (err) {
     return next(err);
   }

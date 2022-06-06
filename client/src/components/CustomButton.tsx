@@ -4,13 +4,16 @@ const CustomButton = ({
   title,
   onClick,
   negative = false,
+  submit = false,
 }: {
   title: string;
   onClick: () => void;
   negative?: boolean;
+  submit?: boolean;
 }) => {
   return (
     <button
+      type={submit ? 'submit' : 'button'}
       onClick={onClick}
       className={`px-3 py-1 border ${
         negative
