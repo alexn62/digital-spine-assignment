@@ -7,6 +7,7 @@ import CustomButton from './CustomButton';
 import axios from 'axios';
 import { useUserContext } from '../stores/UserContext';
 import { Link } from 'react-router-dom';
+import { TAX_RATE } from '../helpers/globals';
 const CartProductList = ({
   products,
   setCart,
@@ -14,7 +15,6 @@ const CartProductList = ({
   products: CartProduct[];
   setCart: React.Dispatch<React.SetStateAction<Cart>>;
 }) => {
-  const TAX_RATE = 0.2;
   const userContext = useUserContext();
 
   const [clearCartModalIsOpen, setClearCartModalIsOpen] = useState(false);

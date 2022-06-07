@@ -18,8 +18,8 @@ const checkout = async (req: Request, res: Response, next: NextFunction) => {
     const order = await Order.create({
       status,
       user,
-      products: products.map((product: { id: mongoose.Types.ObjectId; quantity: number }) => ({
-        product: product.id,
+      products: products.map((product: { product: { _id: mongoose.Types.ObjectId }; quantity: number }) => ({
+        product: product.product._id,
         quantity: product.quantity,
       })),
     });

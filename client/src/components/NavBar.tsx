@@ -29,9 +29,10 @@ const NavBar = () => {
         <h1>Digital Spine Demo</h1>
       </Link>
       <CartButton totalItems={userContext.cartCount ?? 0} />
-      {userContext.user && <NavAuthButton login={false} logout={true} onClick={handleLogout} />}
-      {!userContext.user && <NavAuthButton login={true} onClick={() => navigate('/login')} />}
-      {!userContext.user && <NavAuthButton login={false} onClick={() => navigate('/signup')} />}
+      {userContext.user && <NavAuthButton title="My Orders" login={false} onClick={() => navigate('/orderHistory')} />}
+      {userContext.user && <NavAuthButton title="Logout" login={false} logout={true} onClick={handleLogout} />}
+      {!userContext.user && <NavAuthButton title="Login" login={true} onClick={() => navigate('/login')} />}
+      {!userContext.user && <NavAuthButton title="Signup" login={false} onClick={() => navigate('/signup')} />}
     </div>
   );
 };

@@ -7,6 +7,7 @@ import { UserProvider } from './stores/UserContext';
 import CartView from './views/CartView';
 import LoginView from './views/LoginView';
 import SignUpView from './views/SignUpView';
+import OrderHistoryView from './views/OrderHistoryView';
 
 const queryClient = new QueryClient();
 
@@ -20,6 +21,7 @@ function App() {
               <Route index element={<ProductsView />} />
               <Route path="/products/:id" element={<ProductView />} />
               <Route path="/cart" element={<CartView />} />
+              <Route path="/orderHistory" element={<OrderHistoryView />} />
               <Route path="/login" element={<LoginView />} />
               <Route path="/signup" element={<SignUpView />} />
             </Route>
