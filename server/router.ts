@@ -8,7 +8,6 @@ import { registerController } from './controllers/register.controller';
 import { authMiddleware } from './middlewares/auth.middleware';
 import ordersController from './controllers/orders.controller';
 import sessionController from './controllers/session.controller';
-import path from 'path';
 export const router = Router();
 
 router.post('/register', registerController);
