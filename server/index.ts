@@ -7,7 +7,6 @@ import { seed } from './seeding/seed';
 import { router } from './router';
 import { errorHandler } from './middlewares/error-handling.middleware';
 import session from 'express-session';
-import cookieParser from 'cookie-parser';
 import MongoStore from 'connect-mongo';
 
 dotenv.config({ path: path.resolve(__dirname, `.env.${process.env.NODE_ENV}`) });
@@ -30,7 +29,6 @@ app.use(
   })
 );
 
-// app.use(cookieParser());
 app.use(
   session({
     secret: process.env.SESSION_SECRET!,
@@ -52,6 +50,14 @@ app.use(
 app.use(express.json());
 
 app.use('/api', router);
+
+app.use(express.static(path.join(__dirname, '../client/build')));
+
+router.get('*', (_req, res) => {
+  res.sendFile(path.join(__dirname, '../client/build/index.html'));
+});
+
+app.use(router);
 
 app.use(errorHandler);
 

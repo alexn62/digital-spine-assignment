@@ -13,7 +13,6 @@ const fetchCart = async (): Promise<Cart> => {
     const data = await axios
       .get(`${process.env.REACT_APP_API_URL}/cart`, { withCredentials: true })
       .then((response) => {
-        console.log(response);
         return response.data;
       });
     return data;
