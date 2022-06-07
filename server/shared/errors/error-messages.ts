@@ -10,3 +10,4 @@ export const PRODUCT_NOT_FOUND = 'The product was not found.';
 export const CART_NOT_FOUND = 'The cart was not found.';
 export const INVALID_ORDER_STATUS = 'The order status is invalid.';
 export const SESSION_NOT_FOUND = 'The session was not found.';
+export const PRODUCT_NOT_AVAILABLE = 'The product is not available.';

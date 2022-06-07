@@ -42,6 +42,15 @@ describe('PATCH /addToCart', () => {
     expect(cart.products.length).toBe(1);
   });
 
+  it('Users should not be able to add products to cart if product is not available', async () => {
+    const products = await Product.find({ available: false });
+    const id = products[0]._id;
+    const response = await request(server).patch(`/api/addToCart/${id}`).set('Cookie', session);
+    expect(response.status).toBe(403);
+    const cart = await Cart.findOne({ sessionId: sessionId });
+    expect(cart.products.length).toBe(1);
+  });
+
   it('Users should be able to add products to cart twice', async () => {
     const products = await Product.find({});
     const id = products[0]._id;

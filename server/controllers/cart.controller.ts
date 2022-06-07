@@ -3,7 +3,12 @@ import { Product } from '../db/models/product.model';
 import { Cart } from '../db/models/cart.model';
 import cartService from '../services/cart.service';
 import { CART_UPDATE_SUCCESS } from '../shared/success-messages';
-import { CART_NOT_FOUND, PRODUCT_NOT_FOUND, USER_NOT_AUTHORIZED } from '../shared/errors/error-messages';
+import {
+  CART_NOT_FOUND,
+  PRODUCT_NOT_AVAILABLE,
+  PRODUCT_NOT_FOUND,
+  USER_NOT_AUTHORIZED,
+} from '../shared/errors/error-messages';
 import { CustomError } from '../shared/errors/CustomError.class';
 import mongoose from 'mongoose';
 
@@ -12,6 +17,9 @@ const addToCart = async (req: Request, res: Response, next: NextFunction) => {
     const product = await Product.findById(req.params.id);
     if (!product) {
       return next(new CustomError(PRODUCT_NOT_FOUND, 404));
+    }
+    if (product.available === false) {
+      return next(new CustomError(PRODUCT_NOT_AVAILABLE, 403));
     }
     let cart = await Cart.findOne({ sessionId: req.sessionID });
     if (!cart) {

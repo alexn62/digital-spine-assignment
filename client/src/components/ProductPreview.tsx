@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 import { useUserContext } from '../stores/UserContext';
 
 const ProductPreview = ({ product }: { product: any }) => {
@@ -23,10 +24,17 @@ const ProductPreview = ({ product }: { product: any }) => {
   };
 
   return (
-    <div className="flex flex-col drop-shadow-md rounded-lg bg-white w-48 m-2 cursor-pointer overflow-hidden group">
+    <Link
+      to={`/products/${product._id}`}
+      className="flex flex-col drop-shadow-md rounded-lg bg-white w-48 m-2 cursor-pointer overflow-hidden group"
+    >
       {product.available && (
         <div
-          onClick={handleAddToCart}
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            handleAddToCart();
+          }}
           className="absolute bg-green-400 px-2 rounded-lg text-white bottom-[-24px] group-hover:bottom-2 right-2 transition-all duration-300 hover:bg-green-500"
         >
           + Add
@@ -47,7 +55,7 @@ const ProductPreview = ({ product }: { product: any }) => {
           2
         )}`}</p>
       </div>
-    </div>
+    </Link>
   );
 };
 
