@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  mongo:
+    image: 'mongo'
+    volumes: 
+      - ./data:/data/db
+    ports:
+      - "27017:27017"
+
+    
+  server:
+    build: .
+    restart: always
+    ports: 
+      - "80:3001"
+    depends_on:
+      - mongo
+    environment:
+      NODE_ENV: prod
+
+

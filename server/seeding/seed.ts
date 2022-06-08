@@ -3,7 +3,7 @@ import data from './data.json';
 
 export const seed = async () => {
   console.log('Seeding!');
-  if (process.env.NODE_ENV !== 'dev') {
+  if (process.env.NODE_ENV !== 'dev' && process.env.NODE_ENV !== 'prod') {
     return;
   }
   const products = await Product.find();
