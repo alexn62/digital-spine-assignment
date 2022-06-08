@@ -67,4 +67,4 @@ SESSION_SECRET=
 - ```npm t```
 
 ## Postman collection
-Please a variable ```url``` pointing to ```http://localhost:PORT``` to run queries against the API
+Please set a variable ```url``` pointing to ```http://localhost:PORT``` to run queries against the API
